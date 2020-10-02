@@ -12,12 +12,10 @@ services:
     
     web:
         build: .
-        command: python manage.py runserver 0.0.0.0:8000
-        volumes: 
-            - .:/srv/src/
+        command: python manage.py migrate
+        command: python manage.py runserver 0.0.0.0:5000
         ports: 
-            - 8000:8000
-            - 5432:5432
+            - 5000:5000
         depends_on: 
             - task_manager_db
         environment: 
