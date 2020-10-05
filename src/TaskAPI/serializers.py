@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 
 
 
-from .models import Task
+from .models import Task, Action
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -31,4 +31,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ( "id", "username", "password", )
+
+
+class ActionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Action
+        fields = ('text','date')
 

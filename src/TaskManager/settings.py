@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '!oxzp&iz-=g_%u()rfp%fi(1kllkq*o$#olitkh-x2dsg$xp7%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': 'TaskManager',
         'USER': 'postgres',
         'PASSWORD': '348275723',
-        'HOST': 'task_manager_db',
+        'HOST': 'localhost', #для запуска в докере изменить на "task_manager_db"
         'PORT': '5432',
     }
 }
