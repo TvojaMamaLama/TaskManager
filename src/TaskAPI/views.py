@@ -1,79 +1,46 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
 
 
-from .models import Task, Action
-from .serializers import TaskSerializer, UserSerializer, ActionSerializer
-from .service import TaskFilter
+from .models import Action
+from .serializers import ActionSerializer
+from .services import create_task, create_user, get_task_list, get_task, delete_task, patch_task
 
 
-class CreateOrGetView(APIView):
+class CreateOrGetListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        data = {
-            **request.data,
-            'user': request.user.id,
-        }
-        task = TaskSerializer(data=data)
-        if task.is_valid():
-            task.save()
-            Action.objects.create(
-                text=f'Вы создали {task.data["title"]}',
-                user=request.user
-            )
-            return Response(status=status.HTTP_201_CREATED, data=task.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'not valid data'})
+        status, data = create_task(request)
+        return Response(status=status, data=data)
 
     def get(self, request):
-        f = TaskFilter(request.GET, queryset=Task.objects.filter(user=request.user))
-        serializer = TaskSerializer(f.qs, many=True)
-        return Response(serializer.data)
+        data = get_task_list(request)
+        return Response(data)
 
 
 class UpdateOrDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        task = Task.objects.get(user=request.user, id=pk)
-        serializer = TaskSerializer(task)
-        return Response(serializer.data)
+        data = get_task(request, pk)
+        return Response(data)
 
     def delete(self, request, pk):
-        try:
-            task = Task.objects.filter(user=request.user).get(id=pk)
-            task.delete()
-            Action.objects.create(text=f'Вы удалили {task.title}', user=request.user)
-        except Task.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND, data={'message': 'task not found'})
-        return Response({'message': 'succesfull deleted'})
+        status, data = delete_task(request, pk)
+        return Response(status=status, data=data)
 
     def patch(self, request, pk):
-        task = Task.objects.get(id=pk, user=request.user)
-        if task:
-            serializer = TaskSerializer(task, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                Action.objects.create(text=f'Вы изменили {task.title} , {TaskSerializer(task).data} на {request.data}', user=request.user)
-                return Response(serializer.data)
-            else:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'not valid data'})
-
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND, data={'message': 'task not found'})
+        status, data = patch_task(request, pk)
+        return Response(status=status, data=data)
 
 
 class CreateUserView(APIView):
 
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_201_CREATED)
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'not valid data'})
+        status, data = create_user(request)
+        return Response(status=status, data=data)
 
 
 class HistoryView(APIView):
