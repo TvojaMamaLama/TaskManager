@@ -29,7 +29,7 @@ class Task(models.Model):
 
 
 class Action(models.Model):
-    text = models.CharField('Описание действия',max_length=200)
+    text = models.TextField('Описание действия')
     date = models.DateTimeField('Время создания', default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
 

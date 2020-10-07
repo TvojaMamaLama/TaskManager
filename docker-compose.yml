@@ -12,8 +12,7 @@ services:
     
     web:
         build: .
-        command: python manage.py migrate
-        command: python manage.py runserver 0.0.0.0:5000
+        command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:5000"
         ports: 
             - 5000:5000
         depends_on: 
