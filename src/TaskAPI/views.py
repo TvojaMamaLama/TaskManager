@@ -77,7 +77,7 @@ class CreateUserView(APIView):
 
 
 class HistoryView(APIView):
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         actions = Action.objects.filter(user=request.user).order_by('-date')
