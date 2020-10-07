@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': 'TaskManager',
         'USER': 'postgres',
         'PASSWORD': '348275723',
-        'HOST': 'localhost', #для запуска в докере изменить на "task_manager_db"
+        'HOST': 'localhost',  # для запуска в докере изменить на "task_manager_db"
         'PORT': '5432',
     }
 }
