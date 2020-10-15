@@ -1,7 +1,6 @@
-from typing import Union
-
 import django_filters
 from rest_framework import status
+
 
 from .models import Task, Action
 from .serializers import TaskSerializer, UserSerializer
@@ -13,7 +12,7 @@ class TaskFilter(django_filters.FilterSet):
         fields = ['status', 'end_date', ]
 
 
-def create_task(request: dict) -> Union(int, dict):
+def create_task(request: dict) -> (int, dict):
     data = {
         **request.data,
         'user': request.user.id,
@@ -30,7 +29,7 @@ def create_task(request: dict) -> Union(int, dict):
         status.HTTP_400_BAD_REQUEST, {'message': 'not valid data'}
 
 
-def create_user(request: dict) -> Union(int, dict):
+def create_user(request: dict) -> (int, dict):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -45,13 +44,13 @@ def get_task_list(request: dict) -> dict:
     return serializer.data
 
 
-def get_task(request: dict, pk: int) -> Union(int, dict):
+def get_task(request: dict, pk: int) -> (int, dict):
     task = Task.objects.get(user=request.user, id=pk)
     serializer = TaskSerializer(task)
     return serializer.data
 
 
-def delete_task(request: dict, pk: int) -> Union(int, dict):
+def delete_task(request: dict, pk: int) -> (int, dict):
     try:
         task = Task.objects.filter(user=request.user).get(id=pk)
         task.delete()
@@ -61,8 +60,11 @@ def delete_task(request: dict, pk: int) -> Union(int, dict):
     return status.HTTP_200_OK, {'message': 'succesfull deleted'}
 
 
-def patch_task(request: dict, pk: int) -> Union(int, dict):
-    task = Task.objects.get(id=pk, user=request.user)
+def patch_task(request: dict, pk: int) -> (int, dict):
+    try:
+        task = Task.objects.get(id=pk, user=request.user)
+    except Task.DoesNotExist:
+        task = None
     if task:
         serializer = TaskSerializer(task, data=request.data, partial=True)
         if serializer.is_valid():

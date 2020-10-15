@@ -3,15 +3,12 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
-from datetime import datetime
-
-
 class Task(models.Model):
     STATUS_CHOICES = (
-        ('N','Новая'),
-        ('Z','Запланированая'),
+        ('N', 'Новая'),
+        ('Z', 'Запланированая'),
         ('V', 'В работе'),
-        ('E','Завершенная'),
+        ('E', 'Завершенная'),
     )
     title = models.CharField('Название', max_length=200)
     description = models.TextField('Описание')
@@ -36,5 +33,6 @@ class Action(models.Model):
     def __str__(self):
         return self.text
 
-        
-
+    class Meta:
+        verbose_name = "Действие"
+        verbose_name_plural = "Действия"
